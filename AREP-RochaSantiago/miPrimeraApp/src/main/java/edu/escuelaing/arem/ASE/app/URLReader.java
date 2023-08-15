@@ -38,7 +38,8 @@ public class URLReader {
         System.out.println("-------message-body------");
         BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
-        try (reader) {
+        // try (reader) {
+        try {
             String inputLine = null;
             while ((inputLine = reader.readLine()) != null) {
                 System.out.println(inputLine);
