@@ -26,14 +26,49 @@ public class HttpServer {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(
                             clientSocket.getInputStream()));
+
+            boolean firtsLine = true;
+            String uriString = "";
+
             String inputLine, outputLine;
             while ((inputLine = in.readLine()) != null) {
                 System.out.println("Received: " + inputLine);
+                if(firtsLine){
+                    firtsLine = false;
+                    // POST /hellopost?name=Pedro HTTP/1.1
+                    uriString = inputLine.split(" ")[1];
+                    System.out.println("Uri: " + uriString);
+                }
                 if (!in.ready()) {
                     break;
                 }
             }
-            outputLine = "HTTP/1.1 200 OK\r\n"
+            System.out.println("Uri: " + uriString);
+
+            if(uriString.startsWith("/hello?")){
+                outputLine = getHello(uriString);
+            } else {
+                outputLine = indexResponse();
+            }
+
+            out.println(outputLine);
+            out.close();
+            in.close();
+            clientSocket.close();
+        }
+        serverSocket.close();
+    }
+
+    public static String getHello(String uri){
+        String name = uri.split("=")[1]; 
+        return "HTTP/1.1 200 OK\r\n"
+        + "Content-Type: application/json\r\n"
+        + "\r\n"
+        + "{ \"msg\": \"Hello " + name + "\" }";
+    }
+
+    public static String indexResponse(){
+        String outputLine = "HTTP/1.1 200 OK\r\n"
                     + "Content-Type: text/html\r\n"
                     + "\r\n"
                     + "<!DOCTYPE html>\r\n"
@@ -84,12 +119,8 @@ public class HttpServer {
                     + "            }\r\n"
                     + "        </script>\r\n"
                     + "    </body>\r\n"
-                    + "</html>" + inputLine;
-            out.println(outputLine);
-            out.close();
-            in.close();
-            clientSocket.close();
-        }
-        serverSocket.close();
+                    + "</html>";
+
+        return outputLine;
     }
 }
