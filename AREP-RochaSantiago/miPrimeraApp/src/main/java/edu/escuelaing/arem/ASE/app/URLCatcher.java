@@ -1,4 +1,4 @@
-package miPrimeraApp.src.main.java.edu.escuelaing.arem.ASE.app;
+package edu.escuelaing.arem.ASE.app;
 
 //import java.io.*;
 import java.net.*;

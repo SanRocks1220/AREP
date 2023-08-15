@@ -3,7 +3,7 @@ package edu.escuelaing.arem.ASE.app;
 import java.net.*;
 import java.io.*;
 
-public class EchoServer {
+public class HttpServer {
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         try {
@@ -14,6 +14,7 @@ public class EchoServer {
         }
         Socket clientSocket = null;
         try {
+            System.out.println("Listo para recibir ...");
             clientSocket = serverSocket.accept();
         } catch (IOException e) {
             System.err.println("Accept failed.");
@@ -25,12 +26,25 @@ public class EchoServer {
                         clientSocket.getInputStream()));
         String inputLine, outputLine;
         while ((inputLine = in.readLine()) != null) {
-            System.out.println("Mensaje: " + inputLine);
-            outputLine = "Respuesta: " + inputLine;
-            out.println(outputLine);
-            if (outputLine.equals("Respuesta: Bye."))
+            System.out.println("Received: " + inputLine);
+            if (!in.ready()) {
                 break;
+            }
         }
+        outputLine = "HTTP/1.1 200 OK\r\n"
+                + "Content-Type: text/html\r\n"
+                + "\r\n"
+                + "<!DOCTYPE html>"
+                + "<html>"
+                + "<head>"
+                + "<meta charset=\"UTF-8\">"
+                + "<title>Title of the document</title>\n"
+                + "</head>"
+                + "<body>"
+                + "My Web Site"
+                + "</body>"
+                + "</html>" + inputLine;
+        out.println(outputLine);
         out.close();
         in.close();
         clientSocket.close();

@@ -1,4 +1,4 @@
-package miPrimeraApp.src.test.java.edu.escuelaing.arem.ASE.app;
+package edu.escuelaing.arem.ASE.app;
 
 import static org.junit.Assert.assertTrue;
 
