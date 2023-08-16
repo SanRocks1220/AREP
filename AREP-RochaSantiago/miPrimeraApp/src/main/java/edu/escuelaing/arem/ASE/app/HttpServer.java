@@ -1,7 +1,7 @@
 package edu.escuelaing.arem.ASE.app;
 
-import java.net.*;
 import java.io.*;
+import java.net.*;
 
 public class HttpServer {
     public static void main(String[] args) throws IOException {
@@ -13,7 +13,7 @@ public class HttpServer {
             System.exit(1);
         }
         boolean running = true;
-        while(running) {
+        while (running) {
             Socket clientSocket = null;
             try {
                 System.out.println("Listo para recibir ...");
@@ -22,20 +22,27 @@ public class HttpServer {
                 System.err.println("Accept failed.");
                 System.exit(1);
             }
+
+            handleRequest(clientSocket);
+
+            clientSocket.close();
+        }
+        serverSocket.close();
+    }
+
+    public static void handleRequest(Socket clientSocket) {
+        try {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            clientSocket.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             boolean firtsLine = true;
             String uriString = "";
 
-            String inputLine, outputLine;
+            String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 System.out.println("Received: " + inputLine);
-                if(firtsLine){
+                if (firtsLine) {
                     firtsLine = false;
-                    // POST /hellopost?name=Pedro HTTP/1.1
                     uriString = inputLine.split(" ")[1];
                     System.out.println("Uri: " + uriString);
                 }
@@ -45,8 +52,9 @@ public class HttpServer {
             }
             System.out.println("Uri: " + uriString);
 
-            if(uriString.startsWith("/hello?")){
-                outputLine = getHello(uriString);
+            String outputLine = "";
+            if (uriString.startsWith("/getMovieData")) {
+                outputLine = getMovieData(uriString);
             } else {
                 outputLine = indexResponse();
             }
@@ -54,73 +62,77 @@ public class HttpServer {
             out.println(outputLine);
             out.close();
             in.close();
-            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        serverSocket.close();
     }
 
-    public static String getHello(String uri){
-        String name = uri.split("=")[1]; 
+    public static String getMovieData(String uriString) throws IOException {
+        String movieName = uriString.split("=")[1];
+        HttpConnection.setMovieName(movieName);
+        HttpConnection.main(null);
+        String movieData = HttpConnection.getDataFromApi(); // Modify HttpConnection class to return data as a String
+        System.out.println(movieData);
         return "HTTP/1.1 200 OK\r\n"
-        + "Content-Type: application/json\r\n"
-        + "\r\n"
-        + "{ \"msg\": \"Hello " + name + "\" }";
+                + "Content-Type: application/json\r\n"
+                + "\r\n"
+                + movieData;
     }
 
-    public static String indexResponse(){
+    public static String indexResponse() {
         String outputLine = "HTTP/1.1 200 OK\r\n"
-                    + "Content-Type: text/html\r\n"
-                    + "\r\n"
-                    + "<!DOCTYPE html>\r\n"
-                    + "<html>\r\n"
-                    + "    <head>\r\n"
-                    + "        <title>Form Example</title>\r\n"
-                    + "        <meta charset=\"UTF-8\">\r\n"
-                    + "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
-                    + "    </head>\r\n"
-                    + "    <body>\r\n"
-                    + "        <h1>Form with GET</h1>\r\n"
-                    + "        <form action=\"/hello\">\r\n"
-                    + "            <label for=\"name\">Name:</label><br>\r\n"
-                    + "            <input type=\"text\" id=\"name\" name=\"name\" value=\"John\"><br><br>\r\n"
-                    + "            <input type=\"button\" value=\"Submit\" onclick=\"loadGetMsg()\">\r\n"
-                    + "        </form> \r\n"
-                    + "        <div id=\"getrespmsg\"></div>\r\n"
-                    + "\r\n"
-                    + "        <script>\r\n"
-                    + "            function loadGetMsg() {\r\n"
-                    + "                let nameVar = document.getElementById(\"name\").value;\r\n"
-                    + "                const xhttp = new XMLHttpRequest();\r\n"
-                    + "                xhttp.onload = function() {\r\n"
-                    + "                    document.getElementById(\"getrespmsg\").innerHTML =\r\n"
-                    + "                    this.responseText;\r\n"
-                    + "                }\r\n"
-                    + "                xhttp.open(\"GET\", \"/hello?name=\"+nameVar);\r\n"
-                    + "                xhttp.send();\r\n"
-                    + "            }\r\n"
-                    + "        </script>\r\n"
-                    + "\r\n"
-                    + "        <h1>Form with POST</h1>\r\n"
-                    + "        <form action=\"/hellopost\">\r\n"
-                    + "            <label for=\"postname\">Name:</label><br>\r\n"
-                    + "            <input type=\"text\" id=\"postname\" name=\"name\" value=\"John\"><br><br>\r\n"
-                    + "            <input type=\"button\" value=\"Submit\" onclick=\"loadPostMsg(postname)\">\r\n"
-                    + "        </form>\r\n"
-                    + "        \r\n"
-                    + "        <div id=\"postrespmsg\"></div>\r\n"
-                    + "        \r\n"
-                    + "        <script>\r\n"
-                    + "            function loadPostMsg(name){\r\n"
-                    + "                let url = \"/hellopost?name=\" + name.value;\r\n"
-                    + "\r\n"
-                    + "                fetch (url, {method: 'POST'})\r\n"
-                    + "                    .then(x => x.text())\r\n"
-                    + "                    .then(y => document.getElementById(\"postrespmsg\").innerHTML = y);\r\n"
-                    + "            }\r\n"
-                    + "        </script>\r\n"
-                    + "    </body>\r\n"
-                    + "</html>";
-
+                + "Content-Type: text/html\r\n"
+                + "\r\n"
+                + "<!DOCTYPE html>\r\n"
+                + "<html>\r\n"
+                + "    <head>\r\n"
+                + "        <title>Form Example</title>\r\n"
+                + "        <meta charset=\"UTF-8\">\r\n"
+                + "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+                + "    </head>\r\n"
+                + "    <body>\r\n"
+                + "        <h1>Form with GET</h1>\r\n"
+                + "        <form action=\"/getMovieData\">\r\n"
+                + "            <label for=\"name\">Movie Name:</label><br>\r\n"
+                + "            <input type=\"text\" id=\"name\" name=\"name\" value=\"Avengers\"><br><br>\r\n"
+                + "            <input type=\"button\" value=\"Submit\" onclick=\"loadGetMsg()\">\r\n"
+                + "        </form>\r\n"
+                + "        <div id=\"getrespmsg\"></div>\r\n"
+                + "\r\n"
+                + "        <script>\r\n"
+                + "            function loadGetMsg() {\r\n"
+                + "                let movieName = document.getElementById(\"name\").value;\r\n"
+                + "                const xhttp = new XMLHttpRequest();\r\n"
+                + "                xhttp.onload = function() {\r\n"
+                + "                    document.getElementById(\"getrespmsg\").innerHTML =\r\n"
+                + "                    this.responseText;\r\n"
+                + "                }\r\n"
+                + "                xhttp.open(\"GET\", \"/getMovieData?name=\"+movieName);\r\n"
+                + "                xhttp.send();\r\n"
+                + "            }\r\n"
+                + "        </script>\r\n"
+                + "\r\n"
+                + "        <h1>Form with POST</h1>\r\n"
+                + "        <form action=\"/getMovieDatapost\">\r\n"
+                + "            <label for=\"postname\">Movie Name:</label><br>\r\n"
+                + "            <input type=\"text\" id=\"postname\" name=\"name\" value=\"Avengers\"><br><br>\r\n"
+                + "            <input type=\"button\" value=\"Submit\" onclick=\"loadPostMsg(postname)\">\r\n"
+                + "        </form>\r\n"
+                + "        \r\n"
+                + "        <div id=\"postrespmsg\"></div>\r\n"
+                + "        \r\n"
+                + "        <script>\r\n"
+                + "            function loadPostMsg(name){\r\n"
+                + "                let url = \"/getMovieDatapost?name=\" + name.value;\r\n"
+                + "\r\n"
+                + "                fetch(url, {method: 'POST'})\r\n"
+                + "                    .then(x => x.text())\r\n"
+                + "                    .then(y => document.getElementById(\"postrespmsg\").innerHTML = y);\r\n"
+                + "            }\r\n"
+                + "        </script>\r\n"
+                + "    </body>\r\n"
+                + "</html>";
+    
         return outputLine;
     }
 }
