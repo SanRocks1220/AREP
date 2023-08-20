@@ -6,13 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Crea una conexion para App Web en la que solicitar informacion sobre peliculas directo de la API.
+ * @author Santiago Andrés Rocha C.
  */
 public class HttpServer {
-    
-    /**
-     * Cache de la clase, donde se almacenan las peliculas ya consultadas previamente
-     */
-    ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
+
+    static ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
     
     /** 
      * Metodo principal de la clase HttpServer.
@@ -97,28 +95,73 @@ public class HttpServer {
      */
     public static String getMovieData(String uriString) throws IOException {
         String movieName = uriString.split("=")[1];
-        HttpConnection.setMovieName(movieName);
-        HttpConnection.main(null);
-        String movieData = HttpConnection.getDataFromApi(); // Modify HttpConnection class to return data as a String
-        //System.out.println(movieData);
-        return "HTTP/1.1 200 OK\r\n"
-                + "Content-Type: application/json\r\n"
-                + "\r\n"
-                + htmlFormat(processJson(movieData));
+        if(inCache(movieName)){
+            return "HTTP/1.1 200 OK\r\n"
+                    + "Content-Type: application/json\r\n"
+                    + "\r\n"
+                    + htmlFormat(processJson(getFromCache(movieName)));
+        } else {
+            HttpConnection.setMovieName(movieName);
+            HttpConnection.main(null);
+            String movieData = HttpConnection.getDataFromApi(); // Modify HttpConnection class to return data as a String
+
+            saveInCache(movieName, movieData);
+
+            return "HTTP/1.1 200 OK\r\n"
+                    + "Content-Type: application/json\r\n"
+                    + "\r\n"
+                    + htmlFormat(processJson(movieData));
+        }
+        
     }
 
-    public boolean checkCache(){
-        return true;
+    
+    /** 
+     * Verifica si la pelicula ya ha sido consultada o no anteriormente.
+     * @param movieName Nombre de la pelicula a buscar en cache.
+     * @return boolean True si ya se ha buscado previamente, False si es la primera vez.
+     */
+    public static boolean inCache(String movieName){
+        boolean isIn = false;
+        if(cache.containsKey(movieName)){
+            isIn = true;
+        }
+        return isIn;
     }
 
+    
+    /** 
+     * Retorna los datos almacenados en cache de la pelicula que se solicite.
+     * @param movieName Nombre de la pelicula de la que tomar los datos en cache.
+     * @return String Datos completos en JSON sobre la pelicula solicitada
+     */
+    public static String getFromCache(String movieName){
+        //System.out.println("Ya está en caché, no busca en API");
+        return cache.get(movieName);
+    }
+
+    
+    /** 
+     * Almacena en cache los datos de la pelicula una vez esta sea buscada.
+     * @param movieName Nombre de la pelicula a la que asociar los datos.
+     * @param movieData Datos de la pelicula a guardar asociados a su nombre.
+     */
+    public static void saveInCache(String movieName, String movieData){
+        //System.out.println("No está en caché, busca en API");
+        cache.put(movieName, movieData);
+    }
+
+    /**
+     * Procesa datos en formato JSON como Strings para permitir imprimir correctamente en la pantalla.
+     * @param jsonString Datos en formato JSON a ser procesados y organizados correctamente.
+     * @return Datos ajustados para poder ser mostrados en pantalla.
+     */
     public static String processJson(String jsonString){
-
         String charsToRemove = "\"{}";
 
         for (char c : charsToRemove.toCharArray()) {
             jsonString = jsonString.replace(String.valueOf(c), "");
         }
-        
 
         String[] dataParts = jsonString.split(",");
 
@@ -138,6 +181,13 @@ public class HttpServer {
         return rawData;
     }
 
+    /**
+     * Separa el nombre de una caracteristica con su valor asociado, de tal forma que se obtenga la informacion
+     * asociada en un dato independiente.
+     * @param dataParts Conjunto de caracteristicas con sus valores asociados.
+     * @param key Nombre de la caracteristica a separar de su valore asociado.
+     * @return Valor de la caracteristica indicada separada de su nombre.
+     */
     public static String getCaracts(String[] dataParts, String key) {
         for (String part : dataParts) {
             if (part.startsWith(key)) {
@@ -147,6 +197,12 @@ public class HttpServer {
         return "";
     }
 
+    
+    /** 
+     * Da formato a un String de forma que pueda ser impreso correctamente en pantalla como Html.
+     * @param rawData Datos a dar formato para impresion en pantalla.
+     * @return String Datos con formato Html para poder imprimir en pantalla.
+     */
     public static String htmlFormat(String rawData){
         StringBuilder fromStrToHtml = new StringBuilder();
         fromStrToHtml.append("<ul>\n");
@@ -234,7 +290,10 @@ public class HttpServer {
         return outputLine;
     }
     
-
+    /**
+     * Define y aplica el estilo de la pagina a mostrar en pantalla.
+     * @return Estilo a añadir al Html para enseñarse en pantalla.
+     */
     public static String getCSS() {
         return "<style>\r\n"
                 + "    /* Tu estilo CSS personalizado aquí */\r\n"
