@@ -2,8 +2,24 @@ package edu.escuelaing.arem.ASE.app;
 
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Crea una conexion para App Web en la que solicitar informacion sobre peliculas directo de la API.
+ */
 public class HttpServer {
+    
+    /**
+     * Cache de la clase, donde se almacenan las peliculas ya consultadas previamente
+     */
+    ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
+    
+    /** 
+     * Metodo principal de la clase HttpServer.
+     * Encargada de crear el socket de conexion y arrancar el servidor para recibir solicitudes.
+     * @param args Argumentos para la inicializacion de la clase.
+     * @throws IOException Excepcion arrojada en caso de no poder establecer la conexion.
+     */
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         try {
@@ -30,6 +46,11 @@ public class HttpServer {
         serverSocket.close();
     }
 
+    
+    /** 
+     * Encargado de procesar las solicitudes realizadas desde el cliente.
+     * @param clientSocket Socket destinado a la conexion.
+     */
     public static void handleRequest(Socket clientSocket) {
         try {
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -67,6 +88,13 @@ public class HttpServer {
         }
     }
 
+    
+    /** 
+     * Conecta con la clase HttpConnection y solicita informacion sobre las peliculas indicadas.
+     * @param uriString uri para tomar el nombre de la pelicula.
+     * @return String Formato para poder imprimir el resultado JSON retornado.
+     * @throws IOException Excepcion arrojada en caso de no poder establecer la conexion.
+     */
     public static String getMovieData(String uriString) throws IOException {
         String movieName = uriString.split("=")[1];
         HttpConnection.setMovieName(movieName);
@@ -76,9 +104,70 @@ public class HttpServer {
         return "HTTP/1.1 200 OK\r\n"
                 + "Content-Type: application/json\r\n"
                 + "\r\n"
-                + movieData;
+                + htmlFormat(processJson(movieData));
     }
 
+    public boolean checkCache(){
+        return true;
+    }
+
+    public static String processJson(String jsonString){
+
+        String charsToRemove = "\"{}";
+
+        for (char c : charsToRemove.toCharArray()) {
+            jsonString = jsonString.replace(String.valueOf(c), "");
+        }
+        
+
+        String[] dataParts = jsonString.split(",");
+
+        String title = getCaracts(dataParts, "Title:");
+        String released = getCaracts(dataParts, "Released:");
+        String Runtime = getCaracts(dataParts, "Runtime:");
+        String director = getCaracts(dataParts, "Director:");
+        String Country = getCaracts(dataParts, "Country:");
+
+        String rawData = "";
+        rawData += "Title: " + title + "\n";
+        rawData += "Released: " + released + "\n";
+        rawData += "Runtime: " + Runtime + "\n";
+        rawData += "Director: " + director + "\n";
+        rawData += "Country: " + Country + "\n";
+
+        return rawData;
+    }
+
+    public static String getCaracts(String[] dataParts, String key) {
+        for (String part : dataParts) {
+            if (part.startsWith(key)) {
+                return part.substring(key.length());
+            }
+        }
+        return "";
+    }
+
+    public static String htmlFormat(String rawData){
+        StringBuilder fromStrToHtml = new StringBuilder();
+        fromStrToHtml.append("<ul>\n");
+        
+        String[] lines = rawData.split("\n");
+        for (String line : lines) {
+            String[] parts = line.split(": ");
+            if (parts.length == 2) {
+                fromStrToHtml.append("<li><b>").append(parts[0]).append(":</b> ").append(parts[1]).append("</li>\n");
+            }
+        }
+
+        fromStrToHtml.append("</ul>\n");
+        return fromStrToHtml.toString();
+    }
+    
+    /**
+     * Genera los formularos para retornar informacion solicitada.
+     * Hace uso del metodo getCSS() para agregar estilo al momento de enseñarse en pantalla.
+     * @return String Formularios con GET y POST en su formato HTML, con un CSS basico aplicado
+     */
     public static String indexResponse() {
         String outputLine = "HTTP/1.1 200 OK\r\n"
                 + "Content-Type: text/html\r\n"
@@ -94,7 +183,7 @@ public class HttpServer {
                 + "    <body>\r\n"
                 + "        <div class=\"feedback-card\">\r\n"
                 + "            <div class=\"feedback-header\">\r\n"
-                + "                <h1>Consult Movies by Name (GET)</h1>\r\n"
+                + "                <h1>CONSULT MOVIES BY NAME (GET)</h1>\r\n"
                 + "            </div>\r\n"
                 + "            <div class=\"feedback-body\">\r\n"
                 + "                <form action=\"/getMovieData\">\r\n"
@@ -108,7 +197,7 @@ public class HttpServer {
                 + "\r\n"
                 + "        <div class=\"feedback-card\">\r\n"
                 + "            <div class=\"feedback-header\">\r\n"
-                + "                <h1>Consult Movies by Name (POST)</h1>\r\n"
+                + "                <h1>CONSULT MOVIES BY NAME (POST)</h1>\r\n"
                 + "            </div>\r\n"
                 + "            <div class=\"feedback-body\">\r\n"
                 + "                <form action=\"/getMovieDatapost\">\r\n"
@@ -149,6 +238,7 @@ public class HttpServer {
     public static String getCSS() {
         return "<style>\r\n"
                 + "    /* Tu estilo CSS personalizado aquí */\r\n"
+                + "    font-family: 'Roboto', sans-serif;\r\n"
                 + "    body {\r\n"
                 + "        margin: 0;\r\n"
                 + "        padding: 0;\r\n"
@@ -204,6 +294,12 @@ public class HttpServer {
                 + "        align-self: flex-end;\r\n"
                 + "    }\r\n"
                 + "</style>\r\n";
+
+                //
+                // Nota por Santiago Rocha.
+                // Plantilla tomada de:
+                // https://plantillashtmlgratis.com/efectos-css/formularios-de-contacto-css/formulario-de-retroalimentacion-de-interfaz-de-usuario-retro/
+                //
     }
     
 }
