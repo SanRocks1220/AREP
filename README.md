@@ -50,6 +50,15 @@ En la implementación de este servidor web concurrente en Java, se siguieron alg
 3. **Strategy**: El patrón Strategy se aplicó al manejar las diferentes estrategias para obtener los datos de la API o desde la caché. Se definió una interfaz común para ambas estrategias y se implementaron clases concretas para cada una.
 4. **Template Method**: Se implementó el patrón Template Method en el método `handleRequest` de la clase `HttpServer`. Este método define el esqueleto de cómo se manejan las solicitudes, mientras que los detalles específicos se implementan en las subclases.
 
+## Extensibilidad del Proyecto
+
+Una característica importante del proyecto es su extensibilidad. El diseño modular y orientado a objetos permite que se puedan realizar ampliaciones y mejoras de manera relativamente sencilla. Algunas formas en las que el proyecto podría ser extendido incluyen:
+
+1. **Soporte para Más Fuentes de Datos**: Actualmente, el proyecto obtiene información de películas de una única fuente externa simulada. Se podría extender el proyecto para conectarse a múltiples fuentes de datos, como APIs de películas en línea, bases de datos o servicios de terceros.
+2. **Autenticación y Seguridad**: Se podría agregar autenticación y seguridad al servidor para garantizar que solo los usuarios autorizados puedan acceder a ciertos recursos. Esto podría requerir la implementación de un sistema de autenticación basado en tokens o en otro mecanismo de autenticación.
+3. **Ampliación de la Interfaz de Usuario**: La interfaz de usuario actual es bastante simple. Se podría mejorar y ampliar la interfaz para mostrar más detalles sobre las películas, como reseñas de usuarios, calificaciones, trailers, etc.
+4. **Gestión de Usuarios y Perfiles**: Si se desea convertir el proyecto en una plataforma más completa, se podría agregar la capacidad de que los usuarios creen perfiles, guarden sus películas favoritas, hagan reseñas y compartan recomendaciones.
+
 ## Buenas Prácticas
 
 Al desarrollar el servidor web concurrente, se siguieron una serie de buenas prácticas de programación que mejoran la legibilidad, mantenibilidad y eficiencia del código:
@@ -62,6 +71,18 @@ Al desarrollar el servidor web concurrente, se siguieron una serie de buenas pr�
 6. **Pruebas**: Se realizaron pruebas exhaustivas para asegurarse de que el servidor funcione correctamente bajo diferentes condiciones. 
 7. **Programación "a pares"**:Se utilizó **ChatGPT** así como **BlackBox**, y se estuvo dialogando con otro estudiante de la asignaturapara para identificar y solucionar problemas en el código.
 8. **Optimización**: Se implementaron estrategias de optimización, como el uso de caché, para reducir tiempos de búsqueda y mejorar el rendimiento del servidor.
+
+## Implementación por un Proveedor de Servicios
+
+Este proyecto puede servir como base para la implementación de un servicio real de información sobre películas. Aquí hay algunas consideraciones sobre cómo podría ser implementado por un proveedor de servicios:
+
+1. **Escalabilidad**: Un proveedor de servicios debe asegurarse de que su servidor pueda manejar un gran número de solicitudes simultáneas. Esto podría lograrse utilizando técnicas de balanceo de carga, despliegue en la nube y la optimización del rendimiento del servidor.
+2. **Monetización**: El proveedor podría explorar modelos de monetización, como la oferta de una suscripción premium con funciones adicionales, publicidad dirigida o incluso la venta de datos de usuarios anonimizados a terceros.
+3. **Analíticas**: Para mejorar el servicio y entender mejor las preferencias de los usuarios, se podrían implementar herramientas de análisis para recopilar información sobre las películas más buscadas, las calificaciones más populares, etc.
+4. **Integración con Plataformas Externas**: Se podría permitir a los usuarios vincular sus cuentas de redes sociales o servicios de transmisión de películas, lo que permitiría mostrar recomendaciones personalizadas y compartir actividad en línea.
+
+
+
 
 
 ## Notas

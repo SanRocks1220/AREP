@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Crea una conexion para App Web en la que solicitar informacion sobre peliculas directo de la API.
- * @author Santiago Andrés Rocha C.
+ * @author Santiago Andres Rocha C.
  */
 public class HttpServer {
 
@@ -20,7 +20,7 @@ public class HttpServer {
     /**
      * Constructor de la clase HttpServer.
      * Encargado de inicializar un objeto de la clase para ser alcanzado de forma estatica.
-     * @param serverSocket
+     * @param serverSocket Socket a abrir para permitir la conexion.
      */
     public HttpServer(ServerSocket serverSocket) {
         HttpServer.serverSocket = serverSocket;

@@ -6,7 +6,7 @@ import java.net.Socket;
 
 /**
  * Clase encargada de bombardear el servidor fachada con solicitudes y peticiones.
- * @author Santiago Andrés Rocha C.
+ * @author Santiago Andres Rocha C.
  */
 public class HttpConcurrentTest {
 
