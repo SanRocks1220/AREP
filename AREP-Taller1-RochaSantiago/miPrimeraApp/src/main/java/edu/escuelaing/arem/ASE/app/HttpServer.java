@@ -15,6 +15,13 @@ public class HttpServer {
     static ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
     static ExecutorService threadPool = Executors.newFixedThreadPool(10); // Puedes ajustar el número de hilos
 
+    private static ServerSocket serverSocket;
+
+    
+    public HttpServer(ServerSocket serverSocket) {
+        HttpServer.serverSocket = serverSocket;
+    }
+
     /** 
      * Metodo principal de la clase HttpServer.
      * Encargada de crear el socket de conexion y arrancar el servidor para recibir solicitudes.
@@ -29,34 +36,50 @@ public class HttpServer {
             System.err.println("Could not listen on port: 35000.");
             System.exit(1);
         }
+    
+        HttpServer httpServer = new HttpServer(serverSocket);
+    
         boolean running = true;
         while (running) {
-            Socket clientSocket = null;
+            System.out.println("Listo para recibir ...");
+            httpServer.startServer(); // Pass the clientSocket to startServer method
+        }
+    
+        serverSocket.close();
+    }
+
+    public void startServer() {
+        boolean running = true;
+        while (running) {
             try {
                 System.out.println("Listo para recibir ...");
-                clientSocket = serverSocket.accept();
-
-                //
-                // Aquí empieza la posibilidad de concurrencia
-                //
-                final Socket finalClientSocket = clientSocket;
+                final Socket clientSocket = serverSocket.accept();
+    
                 threadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        handleRequest(finalClientSocket);
+                        handleRequest(clientSocket);
                     }
                 });
-                //
             } catch (IOException e) {
-                System.err.println("Accept failed.");
-                System.exit(1);
+                System.err.println("Accept failed: " + e.getMessage());
             }
-
-            // Ya no son necesarios debido a la concurrencia
-            //handleRequest(clientSocket);
-            //clientSocket.close();
         }
-        serverSocket.close();
+    }
+    
+    
+
+    // Se agrega un método shutdown para detener el ThreadPool cuando sea necesario
+    /**
+     * Encargado de terminar y cerrar las conecciones cuando se trabaja con concurrencia.
+     */
+    public static void shutdown() {
+        threadPool.shutdown();
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     
@@ -139,13 +162,10 @@ public class HttpServer {
      * @param movieName Nombre de la pelicula a buscar en cache.
      * @return boolean True si ya se ha buscado previamente, False si es la primera vez.
      */
-    public static boolean inCache(String movieName){
-        boolean isIn = false;
-        if(cache.containsKey(movieName)){
-            isIn = true;
-        }
-        return isIn;
+    public static boolean inCache(String movieName) {
+        return cache.containsKey(movieName);
     }
+    
 
     
     /** 
@@ -387,11 +407,5 @@ public class HttpServer {
                 //
     }
 
-    // Se agrega un método shutdown para detener el ThreadPool cuando sea necesario
-    /**
-     * Encargado de terminar y cerrar las conecciones cuando se trabaja con concurrencia.
-     */
-    public static void shutdown() {
-        threadPool.shutdown();
-    }
+    
 }
