@@ -82,6 +82,23 @@ Este proyecto puede servir como base para la implementación de un servicio real
 4. **Integración con Plataformas Externas**: Se podría permitir a los usuarios vincular sus cuentas de redes sociales o servicios de transmisión de películas, lo que permitiría mostrar recomendaciones personalizadas y compartir actividad en línea.
 
 
+## Cómo Usar Este Proyecto (con Maven)
+
+Este proyecto se ha configurado para utilizar Maven como herramienta de administración de dependencias y construcción. A continuación, se detallan los pasos para ejecutar y probar el servidor web concurrente:
+
+### Requisitos Previos
+
+Asegúrate de tener instalados los siguientes elementos en tu sistema:
+
+1. **Java Development Kit (JDK)**: Se debe tener una versión del JDK instalada en el sistema.
+2. **Maven**: Se debe tener Maven instalado.
+
+### Pasos para Ejecutar el Proyecto
+
+1. **Clonar el Repositorio**: Abrir una terminal y navegar hasta el directorio en el que se desee clonar el repositorio.
+2. **Compilar el Proyecto**: Haciendo uso de '''mvn compile'''
+3. **Ejecutar el Servidor**: ''' mvn exec:java -Dexec.mainClass="edu.escuelaing.arem.ASE.app.HttpServer" '''
+4. **Acceder a la Interfaz de Usuario**: Entrando desde un navegador a ''' http://localhost:35000/ '''
 
 
 
