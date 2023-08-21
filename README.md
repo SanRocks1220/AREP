@@ -13,8 +13,6 @@ La estructura del proyecto sigue el patrón de diseño MVC (Modelo-Vista-Control
 - `indexResponse()` y otros métodos relacionados con la generación de respuestas HTML actúan como la vista que define cómo se muestra la información al usuario.
 - `cache` y otros métodos relacionados con la gestión de datos actúan como el modelo que almacena y gestiona los datos.
 
-## Buenas Prácticas
-
 ## Estrategias de Programación Empleadas
 
 En este proyecto, se aplicaron diversas estrategias de programación:
@@ -64,8 +62,6 @@ Al desarrollar el servidor web concurrente, se siguieron una serie de buenas pr�
 6. **Pruebas**: Se realizaron pruebas exhaustivas para asegurarse de que el servidor funcione correctamente bajo diferentes condiciones. 
 7. **Programación "a pares"**:Se utilizó **ChatGPT** y se estuvo dialogando con otro estudiante de la asignaturapara para identificar y solucionar problemas en el código, .
 8. **Optimización**: Se implementaron estrategias de optimización, como el uso de caché, para reducir tiempos de búsqueda y mejorar el rendimiento del servidor.
-
-Estas buenas prácticas contribuyen a la calidad y eficiencia del código, facilitando su mantenimiento y evolución a lo largo del tiempo. Al seguir estos enfoques, se crea un software más robusto y fácil de mantener.
 
 
 ## Notas
