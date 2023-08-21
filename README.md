@@ -1,7 +1,8 @@
 # Web Server Concurrente en Java - Movie Info
 
 Este proyecto consiste en la implementación de un servidor web concurrente en Java que puede manejar múltiples solicitudes de manera simultánea utilizando threads. El servidor es capaz de recibir solicitudes HTTP GET para obtener información sobre películas animadas famosas. Cada solicitud GET incluye el nombre de una película y el servidor responde con detalles sobre esa película, como el título, la fecha de lanzamiento, la duración, el director, el país y el póster.
-Con ayuda de **ChatGPT** y **BlackBox**, así como de otro estudiante de la asignatura, se indagó y dió solución al gran número de porblemas que se presentaron a lo largo del desarrollo. 
+
+Con ayuda de **ChatGPT** y **BlackBox**, así como de otro estudiante de la asignatura, se indagó y dió solución al gran número de problemas que se presentaron a lo largo del desarrollo, a nivel de conocimientos sobre tecnologías y métodos, así como a nivel de código e implementaciones. 
 
 ## Arquitectura y Patrones de Diseño
 
