@@ -60,7 +60,7 @@ Al desarrollar el servidor web concurrente, se siguieron una serie de buenas pr�
 4. **Manejo de Excepciones**: Se implementó un manejo adecuado de excepciones para capturar y manejar errores de manera eficiente. Esto mejora la robustez del sistema y ayuda a identificar y resolver problemas.
 5. **Indentación y Formato**: Se aplicó una indentación y un formato coherente en todo el código. Esto mejora la legibilidad y facilita la identificación de bloques de código.
 6. **Pruebas**: Se realizaron pruebas exhaustivas para asegurarse de que el servidor funcione correctamente bajo diferentes condiciones. 
-7. **Programación "a pares"**:Se utilizó **ChatGPT** y se estuvo dialogando con otro estudiante de la asignaturapara para identificar y solucionar problemas en el código, .
+7. **Programación "a pares"**:Se utilizó **ChatGPT** así como **BlackBox**, y se estuvo dialogando con otro estudiante de la asignaturapara para identificar y solucionar problemas en el código.
 8. **Optimización**: Se implementaron estrategias de optimización, como el uso de caché, para reducir tiempos de búsqueda y mejorar el rendimiento del servidor.
 
 
