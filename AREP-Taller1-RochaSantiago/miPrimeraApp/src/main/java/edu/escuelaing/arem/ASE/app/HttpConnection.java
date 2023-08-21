@@ -50,13 +50,17 @@ public class HttpConnection {
 
     public static String fullApiURL(){
         //setMovieName("Wall-e");
-        String fullURL = GET_URL + "/?t=" + movieName + "&apikey=" + API_KEY;
+        String fullURL = GET_URL + "?t=" + movieName + "&apikey=" + API_KEY;
         System.out.println(fullURL);
         return fullURL;
     }
 
     public static void setMovieName(String name){
         movieName = name;
+    }
+
+    public static String getMovieName(){
+        return movieName;
     }
 
     public static String getDataFromApi(){

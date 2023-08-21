@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-public class HttpServerTests {
+public class HttpServerTest {
 
     @Test
     public void testGetMovieDataCacheHit() throws IOException {
