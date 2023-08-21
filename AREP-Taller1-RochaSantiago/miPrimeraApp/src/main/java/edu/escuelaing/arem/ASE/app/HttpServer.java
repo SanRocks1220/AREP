@@ -3,6 +3,8 @@ package edu.escuelaing.arem.ASE.app;
 import java.io.*;
 import java.net.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Crea una conexion para App Web en la que solicitar informacion sobre peliculas directo de la API.
@@ -11,7 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HttpServer {
 
     static ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
-    
+    static ExecutorService threadPool = Executors.newFixedThreadPool(10); // Puedes ajustar el número de hilos
+
     /** 
      * Metodo principal de la clase HttpServer.
      * Encargada de crear el socket de conexion y arrancar el servidor para recibir solicitudes.
@@ -32,14 +35,26 @@ public class HttpServer {
             try {
                 System.out.println("Listo para recibir ...");
                 clientSocket = serverSocket.accept();
+
+                //
+                // Aquí empieza la posibilidad de concurrencia
+                //
+                final Socket finalClientSocket = clientSocket;
+                threadPool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleRequest(finalClientSocket);
+                    }
+                });
+                //
             } catch (IOException e) {
                 System.err.println("Accept failed.");
                 System.exit(1);
             }
 
-            handleRequest(clientSocket);
-
-            clientSocket.close();
+            // Ya no son necesarios debido a la concurrencia
+            //handleRequest(clientSocket);
+            //clientSocket.close();
         }
         serverSocket.close();
     }
@@ -81,6 +96,9 @@ public class HttpServer {
             out.println(outputLine);
             out.close();
             in.close();
+
+            // Cerrar el socket después de completar la solicitud
+            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -136,7 +154,7 @@ public class HttpServer {
      * @return String Datos completos en JSON sobre la pelicula solicitada
      */
     public static String getFromCache(String movieName){
-        //System.out.println("Ya está en caché, no busca en API");
+        System.out.println("Ya está en caché, no busca en API");
         return cache.get(movieName);
     }
 
@@ -147,7 +165,7 @@ public class HttpServer {
      * @param movieData Datos de la pelicula a guardar asociados a su nombre.
      */
     public static void saveInCache(String movieName, String movieData){
-        //System.out.println("No está en caché, busca en API");
+        System.out.println("No está en caché, busca en API");
         cache.put(movieName, movieData);
     }
 
@@ -169,14 +187,16 @@ public class HttpServer {
         String released = getCaracts(dataParts, "Released:");
         String Runtime = getCaracts(dataParts, "Runtime:");
         String director = getCaracts(dataParts, "Director:");
-        String Country = getCaracts(dataParts, "Country:");
+        String country = getCaracts(dataParts, "Country:");
+        String poster = getCaracts(dataParts, "Poster:");
 
         String rawData = "";
         rawData += "Title: " + title + "\n";
         rawData += "Released: " + released + "\n";
         rawData += "Runtime: " + Runtime + "\n";
         rawData += "Director: " + director + "\n";
-        rawData += "Country: " + Country + "\n";
+        rawData += "Country: " + country + "\n";
+        rawData += "Poster: " + poster + "\n";
 
         return rawData;
     }
@@ -205,17 +225,23 @@ public class HttpServer {
      */
     public static String htmlFormat(String rawData){
         StringBuilder fromStrToHtml = new StringBuilder();
+        String moviePoster = "";
         fromStrToHtml.append("<ul>\n");
         
         String[] lines = rawData.split("\n");
         for (String line : lines) {
             String[] parts = line.split(": ");
-            if (parts.length == 2) {
+
+            if (parts.length == 2 && !parts[0].equals("Poster")) {
                 fromStrToHtml.append("<li><b>").append(parts[0]).append(":</b> ").append(parts[1]).append("</li>\n");
+            } else {
+                fromStrToHtml.append("<li><b>").append(parts[0]).append(":</b> ").append("</li>\n");
+                moviePoster = parts[1];
             }
         }
 
         fromStrToHtml.append("</ul>\n");
+        fromStrToHtml.append("<center><img src=").append(moviePoster).append(" /></center>");
         return fromStrToHtml.toString();
     }
     
@@ -308,7 +334,7 @@ public class HttpServer {
                 + "        flex-direction: column;\r\n"
                 + "        height: 100vh;\r\n"
                 + "    }\r\n"
-                + "    input, button, textarea {\r\n"
+                + "    input, button, textarea, img {\r\n"
                 + "        border: 2px solid rgba(0, 0, 0, 0.6);\r\n"
                 + "        background-image: none;\r\n"
                 + "        background-color: #dadad3;\r\n"
@@ -360,5 +386,9 @@ public class HttpServer {
                 // https://plantillashtmlgratis.com/efectos-css/formularios-de-contacto-css/formulario-de-retroalimentacion-de-interfaz-de-usuario-retro/
                 //
     }
-    
+
+    // Se agrega un método shutdown para detener el ThreadPool cuando sea necesario
+    public static void shutdown() {
+        threadPool.shutdown();
+    }
 }
