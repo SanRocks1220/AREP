@@ -13,11 +13,15 @@ import java.util.concurrent.Executors;
 public class HttpServer {
 
     static ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
-    static ExecutorService threadPool = Executors.newFixedThreadPool(10); // Puedes ajustar el número de hilos
+    static ExecutorService threadPool = Executors.newFixedThreadPool(10); // Se puede ajustar el número de hilos
 
     private static ServerSocket serverSocket;
 
-    
+    /**
+     * Constructor de la clase HttpServer.
+     * Encargado de inicializar un objeto de la clase para ser alcanzado de forma estatica.
+     * @param serverSocket
+     */
     public HttpServer(ServerSocket serverSocket) {
         HttpServer.serverSocket = serverSocket;
     }
@@ -28,6 +32,7 @@ public class HttpServer {
      * @param args Argumentos para la inicializacion de la clase.
      * @throws IOException Excepcion arrojada en caso de no poder establecer la conexion.
      */
+
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         try {
@@ -48,6 +53,9 @@ public class HttpServer {
         serverSocket.close();
     }
 
+    /**
+     * Metodo encargado de encender y arrancar el servidor.
+     */
     public void startServer() {
         boolean running = true;
         while (running) {

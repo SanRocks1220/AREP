@@ -4,8 +4,17 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Clase encargada de bombardear el servidor fachada con solicitudes y peticiones.
+ * @author Santiago Andrés Rocha C.
+ */
 public class HttpConcurrentTest {
 
+    /**
+     * Metodo principal de la clase, encargada de abrir el servidor, conectarse, y enviar multiples solicitudes con peliculas establecidas.
+     * @param args Argumentos para la inicializacion de la clase.
+     * @throws IOException Excepcion arrojada en caso de no poder establecer la conexion.
+     */
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = new ServerSocket(35000);
         final HttpServer httpServer = new HttpServer(serverSocket);
@@ -74,5 +83,10 @@ public class HttpConcurrentTest {
         //HttpServer.shutdown();
         //serverThread.interrupt(); // Interrupt the server thread to exit the while loop
         //serverSocket.close();
+
+        //
+        // Nota por Santiago Rocha.
+        // Clase principalmente implementada con la ayuda de ChatGPT
+        //
     }
 }

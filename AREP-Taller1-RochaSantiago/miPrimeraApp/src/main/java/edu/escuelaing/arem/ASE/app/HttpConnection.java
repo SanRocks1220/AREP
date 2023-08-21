@@ -9,6 +9,7 @@ import java.net.URL;
 
 /**
  * Clase encargada de mantener la conexion y conseguir datos de la API proporcionada.
+ * @author Santiago Andrés Rocha C.
  */
 public class HttpConnection {
 

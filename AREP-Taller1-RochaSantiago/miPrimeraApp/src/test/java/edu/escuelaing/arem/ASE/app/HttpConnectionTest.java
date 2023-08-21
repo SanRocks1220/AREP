@@ -3,6 +3,10 @@ package edu.escuelaing.arem.ASE.app;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Encargado de testear las funcionalidades y métodos de la clase HttpConnection.
+ * @author Santiago Andrés Rocha C.
+ */
 public class HttpConnectionTest {
 
     @Test

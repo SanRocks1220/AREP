@@ -5,6 +5,11 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+
+/**
+ * Encargado de testear las funcionalidades y métodos de la clase HttpServer.
+ * @author Santiago Andrés Rocha C.
+ */
 public class HttpServerTest {
 
     @Test
