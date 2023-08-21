@@ -96,9 +96,9 @@ Asegúrate de tener instalados los siguientes elementos en tu sistema:
 ### Pasos para Ejecutar el Proyecto
 
 1. **Clonar el Repositorio**: Abrir una terminal y navegar hasta el directorio en el que se desee clonar el repositorio.
-2. **Compilar el Proyecto**: Haciendo uso de '''mvn compile'''
-3. **Ejecutar el Servidor**: ''' mvn exec:java -Dexec.mainClass="edu.escuelaing.arem.ASE.app.HttpServer" '''
-4. **Acceder a la Interfaz de Usuario**: Entrando desde un navegador a ''' http://localhost:35000/ '''
+2. **Compilar el Proyecto**: Haciendo uso de `mvn compile`
+3. **Ejecutar el Servidor**: ` mvn exec:java -Dexec.mainClass="edu.escuelaing.arem.ASE.app.HttpServer" `
+4. **Acceder a la Interfaz de Usuario**: Entrando desde un navegador a ` http://localhost:35000/ `
 
 
 
