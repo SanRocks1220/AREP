@@ -388,6 +388,9 @@ public class HttpServer {
     }
 
     // Se agrega un método shutdown para detener el ThreadPool cuando sea necesario
+    /**
+     * Encargado de terminar y cerrar las conecciones cuando se trabaja con concurrencia.
+     */
     public static void shutdown() {
         threadPool.shutdown();
     }
